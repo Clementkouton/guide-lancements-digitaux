@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Interactif des Lancements Digitaux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Focus (Background: #F5F5F4, Text: #374151, Accent: #3B82F6, Muted Accent: #93C5FD) -->
+    <!-- Application Structure Plan: The SPA uses a dashboard/interactive guide model. A central grid of 10 clickable cards (the errors) serves as the main navigation. Clicking a card dynamically loads its detailed content into a tabbed interface (L'Erreur, Conseils, Outils, Checklist), preventing information overload. An interactive launch process diagram (Pré-lancement, Lancement, Post-lancement) provides a high-level overview and links to the relevant errors. This non-linear, task-oriented structure is more engaging and user-friendly than the original linear ebook format, allowing users to quickly access the information they need. -->
+    <!-- Visualization & Content Choices: Errors -> Interactive Card Grid (HTML/CSS) -> Click interaction to load content. Justification: Visual, non-linear navigation. Detailed Content -> Tabbed View (JS) -> Click to switch panes. Justification: Organizes dense text. Launch Process -> HTML/CSS Flowchart -> Click to highlight related errors. Justification: Shows relationships and structure. Annexes -> Accordion (JS) -> Click to expand. Justification: Hides supplementary info cleanly. NO CHARTS are used as the source is qualitative. All visuals are built with HTML/CSS/Tailwind to adhere to the NO SVG/Mermaid constraint. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F4; /* stone-100 */
+            color: #374151; /* gray-700 */
+        }
+        .nav-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .nav-card.active {
+            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px #3B82F6; /* blue-500 */
+            border-color: #3B82F6;
+        }
+        .tab-btn.active {
+            border-color: #3B82F6;
+            background-color: #3B82F6;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .process-step:hover .process-icon {
+            background-color: #BFDBFE; /* blue-200 */
+        }
+        .highlight-error {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800">Lancements Digitaux</h1>
+            <p class="mt-2 text-lg text-gray-600">Le guide interactif pour éviter les 10 erreurs fatales et réussir à coup sûr.</p>
+        </header>
+
+        <main>
+            <!-- Section du Processus de Lancement -->
+            <section id="process" class="mb-12">
+                <h2 class="text-2xl font-bold text-center mb-2 text-gray-700">Le Parcours d'un Lancement Réussi</h2>
+                <p class="text-center text-gray-500 mb-6 max-w-3xl mx-auto">
+                    Chaque lancement suit un parcours en trois phases clés. Interagissez avec chaque étape pour découvrir les erreurs les plus courantes qui y sont associées et comment les éviter.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-0">
+                    <!-- Étape 1: Pré-lancement -->
+                    <div class="process-step text-center cursor-pointer p-4" data-phase="pre-launch">
+                        <div class="process-icon flex items-center justify-center w-20 h-20 mx-auto bg-white rounded-full shadow-md mb-3 transition-colors duration-200">
+                            <span class="text-3xl">🗓️</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800">Pré-Lancement</h3>
+                        <p class="text-sm text-gray-500">Préparer le terrain</p>
+                    </div>
+                    
+                    <div class="w-20 h-1 bg-gray-300 md:w-32 md:h-1 hidden md:block"></div>
+
+                    <!-- Étape 2: Lancement -->
+                    <div class="process-step text-center cursor-pointer p-4" data-phase="launch">
+                        <div class="process-icon flex items-center justify-center w-20 h-20 mx-auto bg-white rounded-full shadow-md mb-3 transition-colors duration-200">
+                            <span class="text-3xl">🚀</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800">Lancement</h3>
+                        <p class="text-sm text-gray-500">Passer à l'action</p>
+                    </div>
+
+                    <div class="w-20 h-1 bg-gray-300 md:w-32 md:h-1 hidden md:block"></div>
+
+                    <!-- Étape 3: Post-lancement -->
+                    <div class="process-step text-center cursor-pointer p-4" data-phase="post-launch">
+                        <div class="process-icon flex items-center justify-center w-20 h-20 mx-auto bg-white rounded-full shadow-md mb-3 transition-colors duration-200">
+                            <span class="text-3xl">📊</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800">Post-Lancement</h3>
+                        <p class="text-sm text-gray-500">Analyser et fidéliser</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section des Erreurs -->
+            <section id="errors-grid" class="mb-12">
+                 <h2 class="text-2xl font-bold text-center mb-2 text-gray-700">Explorez les 10 Erreurs Fatales</h2>
+                 <p class="text-center text-gray-500 mb-8 max-w-3xl mx-auto">
+                    Le succès d'un lancement digital ne repose pas sur la chance, mais sur l'évitement de pièges courants. Sélectionnez une erreur ci-dessous pour découvrir des stratégies concrètes, des outils pratiques et des conseils d'experts pour la surmonter.
+                </p>
+                <div id="nav-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    <!-- Les cartes de navigation seront injectées ici par JS -->
+                </div>
+            </section>
+
+            <!-- Section de Contenu Dynamique -->
+            <section id="content-display" class="bg-white p-6 sm:p-8 rounded-xl shadow-lg min-h-[30rem] hidden">
+                <h3 id="content-title" class="text-2xl md:text-3xl font-bold text-gray-800 mb-4"></h3>
+                <p id="content-intro" class="text-gray-600 mb-6"></p>
+                
+                <div id="tabs-container" class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                        <button data-tab="description" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-200">L'Erreur</button>
+                        <button data-tab="conseils" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-200">Conseils & Stratégies</button>
+                        <button data-tab="outils" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-200">Outils</button>
+                        <button data-tab="checklist" class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-200">Checklist</button>
+                    </nav>
+                </div>
+
+                <div id="tabs-content-container">
+                    <div id="tab-content-description" class="tab-content prose max-w-none"></div>
+                    <div id="tab-content-conseils" class="tab-content prose max-w-none"></div>
+                    <div id="tab-content-outils" class="tab-content prose max-w-none"></div>
+                    <div id="tab-content-checklist" class="tab-content prose max-w-none"></div>
+                </div>
+            </section>
+            
+            <!-- Section des Annexes -->
+            <section id="annexes" class="mt-16">
+                <h2 class="text-2xl font-bold text-center mb-8 text-gray-700">Ressources Complémentaires</h2>
+                <div id="accordion-container" class="space-y-4 max-w-4xl mx-auto">
+                    <!-- Les accordéons seront injectés ici par JS -->
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-16 py-6 border-t border-gray-200">
+            <p class="text-sm text-gray-500">&copy; 2025 Guide Interactif des Lancements Digitaux. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const data = {
+        errors: [
+            { id: 1, title: "Lancer sans audience", phase: "pre-launch", icon: "👥", content: {
+                intro: "Lancer un produit dans le vide, sans avoir préalablement cultivé une audience intéressée et engagée, c'est comme organiser une fête sans envoyer d'invitations. Le silence sera assourdissant.",
+                description: "Cette erreur consiste à développer un produit en secret et à le révéler au monde le jour J, en espérant que les clients viendront d'eux-mêmes. Sans une audience 'chauffée', votre lancement manquera de momentum, de retours initiaux et de ventes, compromettant ainsi son succès dès le départ.",
+                conseils: `
+                    <h4>Stratégies Avancées de Collecte d'E-mails :</h4>
+                    <ul>
+                        <li><strong>Lead Magnets Variés :</strong> Proposez des mini-cours, checklists interactives, ou calculateurs personnalisés.</li>
+                        <li><strong>Challenges Pré-Lancement :</strong> Organisez des défis de 5-7 jours pour créer de l'engagement.</li>
+                        <li><strong>Webinaires Exclusifs :</strong> Éduquez votre audience sur le problème que votre produit résout.</li>
+                        <li><strong>Partenariats Stratégiques :</strong> Collaborez avec des influenceurs pour des échanges de visibilité.</li>
+                    </ul>
+                    <h4>Techniques d'Engagement :</h4>
+                    <ul>
+                        <li><strong>Sondages Participatifs :</strong> Impliquez votre audience dans le processus de création.</li>
+                        <li><strong>Contenu 'Behind the Scenes' :</strong> Partagez les coulisses pour humaniser votre marque.</li>
+                        <li><strong>Sessions Q&A en Direct :</strong> Construisez la confiance et l'autorité.</li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h5 class="font-bold text-blue-700 mb-3">✨ Générateur d'Idées de Lead Magnet</h5>
+                        <p class="text-sm text-blue-600 mb-3">Décrivez votre niche ou produit pour obtenir des idées de lead magnets.</p>
+                        <textarea id="lead-magnet-input" class="w-full p-2 border border-blue-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-700" rows="3" placeholder="Ex: Coaching sportif pour femmes enceintes, Logiciel de gestion de projet pour freelances..."></textarea>
+                        <button id="generate-lead-magnet-btn" class="mt-3 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200">Générer des idées</button>
+                        <div id="lead-magnet-loading" class="mt-3 text-blue-600 hidden">Chargement...</div>
+                        <div id="lead-magnet-results" class="mt-4 p-3 bg-blue-100 rounded-md text-blue-800 text-sm hidden"></div>
+                    </div>
+                `,
+                outils: "<ul><li><strong>Email Marketing :</strong> Sendinblue, MailerLite, HubSpot.</li><li><strong>Landing Pages :</strong> ClickFunnels, Webflow.</li><li><strong>Sondages et Quizz :</strong> Jotform, Interact.</li><li><strong>Écoute Sociale (IA) :</strong> Brandwatch, Talkwalker.</li></ul>",
+                checklist: "<ul><li>[ ] Avez-vous un Lead Magnet irrésistible en place ?</li><li>[ ] Votre stratégie de collecte d'e-mails est-elle active depuis au moins 3 mois ?</li><li>[ ] Avez-vous interagi avec votre audience via des sondages ou des lives ?</li><li>[ ] Votre audience est-elle segmentée pour des messages personnalisés ?</li></ul>"
+            }},
+            { id: 2, title: "Ne pas tester l'offre", phase: "pre-launch", icon: "🧪", content: {
+                intro: "Investir temps et argent dans un produit sans avoir validé son marché, c'est prendre un risque énorme. Un lancement réussi repose sur la certitude que votre offre répond à un besoin réel et pressant.",
+                description: "Cette erreur consiste à supposer que votre idée est géniale et que les gens vont l'adorer, sans jamais la confronter à la réalité du marché. Le résultat est souvent un produit que personne ne veut, ou qui ne résout pas le bon problème.",
+                conseils: `<h4>Méthodes de Validation Efficaces :</h4><ul><li><strong>Produit Minimum Viable (MVP) :</strong> Lancez une version simplifiée pour recueillir des retours et itérer.</li><li><strong>Offres Pilotes et Bêtas Tests :</strong> Proposez votre produit à un groupe restreint en échange de feedbacks détaillés.</li><li><strong>Campagnes 'Fake Door' :</strong> Créez une page de vente pour un produit inexistant afin de mesurer l'intérêt.</li><li><strong>Pré-ventes :</strong> Validez l'intérêt tout en finançant le développement.</li></ul>`,
+                outils: "<ul><li><strong>Tests A/B :</strong> VWO, Optimizely.</li><li><strong>Analyse Comportementale :</strong> Hotjar, Crazy Egg.</li><li><strong>Gestion de Projets (MVP) :</strong> Trello, Asana, Jira.</li></ul>",
+                checklist: "<ul><li>[ ] Votre offre a-t-elle été testée auprès d'un groupe cible ?</li><li>[ ] Avez-vous un MVP ou une version pilote prête pour le feedback ?</li><li>[ ] Les KPIs de validation sont-ils clairement définis et mesurés ?</li><li>[ ] Êtes-vous prêt à itérer votre offre en fonction des retours ?</li></ul>"
+            }},
+            { id: 3, title: "Mal connaître sa cible", phase: "pre-launch", icon: "🎯", content: {
+                intro: "Créer un produit ou un message marketing 'pour tout le monde', c'est en réalité ne parler à personne. Une connaissance superficielle de votre audience mène à des messages génériques et inefficaces.",
+                description: "Cette erreur se manifeste par un marketing qui ne résonne pas, des fonctionnalités qui ne sont pas utilisées, et une incapacité à se connecter émotionnellement avec les prospects. Sans une compréhension profonde de leurs douleurs, désirs et langage, votre message sera inaudible.",
+                conseils: `<h4>Techniques d'Analyse Approfondie :</h4><ul><li><strong>Entretiens Qualitatifs :</strong> Menez des entretiens individuels pour comprendre les défis et aspirations.</li><li><strong>Analyse des Forums et Groupes :</strong> Explorez Reddit, Facebook, etc., pour identifier les problèmes récurrents.</li><li><strong>Développement de Buyer Personas :</strong> Créez des archétypes détaillés de vos clients idéaux.</li><li><strong>Cartographie du Parcours Client :</strong> Visualisez chaque étape pour optimiser les points de contact.</li></ul>`,
+                outils: "<ul><li><strong>Analyse de Mots-Clés :</strong> AnswerThePublic, Semrush.</li><li><strong>Création de Personas :</strong> Xtensio, HubSpot's Make My Persona.</li><li><strong>CRM :</strong> Salesforce, Zoho CRM.</li></ul>",
+                checklist: "<ul><li>[ ] Avez-vous créé des Buyer Personas détaillés ?</li><li>[ ] Avez-vous mené des entretiens qualitatifs avec votre cible ?</li><li>[ ] Votre message marketing parle-t-il directement aux douleurs de votre cible ?</li><li>[ ] Avez-vous cartographié le parcours client ?</li></ul>"
+            }},
+            { id: 4, title: "Négliger le storytelling", phase: "launch", icon: "📖", content: {
+                intro: "Présenter un produit comme une simple liste de fonctionnalités, c'est ignorer le pouvoir émotionnel de la narration. Les gens achètent des histoires, pas des objets.",
+                description: "Un produit sans histoire est une commodité. Il ne crée pas de connexion, ne se différencie pas et ne reste pas dans les esprits. Le storytelling transforme un produit en une solution, une marque en un mouvement, et un client en un héros.",
+                conseils: `<h4>Construire un Récit Captivant :</h4><ul><li><strong>Le Voyage du Héros :</strong> Votre client est le héros, votre produit est son guide.</li><li><strong>L'Histoire 'Pourquoi' :</strong> Partagez l'inspiration derrière votre produit pour créer une connexion humaine.</li><li><strong>Témoignages Transformatifs :</strong> Montrez des histoires de réussite, pas seulement des avis.</li><li><strong>Intégration Omnicanale :</strong> Votre histoire doit être cohérente sur tous les points de contact (emails, réseaux sociaux, page de vente).</li></ul>`,
+                outils: "<ul><li><strong>Écriture :</strong> Antidote, Hemingway App.</li><li><strong>Visuels :</strong> Unsplash, Storyblocks.</li><li><strong>Montage Vidéo :</strong> InVideo, CapCut.</li></ul>",
+                checklist: "<ul><li>[ ] Votre marque a-t-elle une histoire claire et inspirante ?</li><li>[ ] Le voyage du héros est-il intégré dans votre communication ?</li><li>[ ] Utilisez-vous des témoignages qui racontent une transformation ?</li><li>[ ] Le storytelling est-il présent sur tous vos canaux ?</li></ul>"
+            }},
+            { id: 5, title: "Page de vente non optimisée", phase: "launch", icon: "📄", content: {
+                intro: "Votre page de vente est votre vendeur le plus important, travaillant 24/7. Une page mal conçue, peu claire ou non persuasive peut anéantir tous vos efforts marketing.",
+                description: "Une page de vente inefficace se caractérise par un faible taux de conversion. Les causes peuvent être multiples : un titre faible, un manque de preuve sociale, un appel à l'action confus, ou un design qui n'inspire pas confiance.",
+                conseils: `
+                    <h4>Éléments Clés de Conversion :</h4>
+                    <ul>
+                        <li><strong>Titre Accrocheur & VSL :</strong> Captez l'attention immédiatement et expliquez l'offre de manière dynamique.</li>
+                        <li><strong>Preuve Sociale Irrésistible :</strong> Intégrez des témoignages vidéo, logos, statistiques.</li>
+                        <li><strong>Bénéfices > Caractéristiques :</strong> Concentrez-vous sur la transformation, pas sur la technique.</li>
+                        <li><strong>Garantie Forte :</strong> Réduisez la perception du risque pour l'acheteur.</li>
+                        <li><strong>Design Mobile-First :</strong> Assurez une expérience parfaite sur mobile.</li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <h5 class="font-bold text-purple-700 mb-3">✨ Générateur de Titres de Page de Vente</h5>
+                        <p class="text-sm text-purple-600 mb-3">Décrivez le bénéfice principal de votre produit ou votre audience cible pour obtenir des titres percutants.</p>
+                        <textarea id="headline-input" class="w-full p-2 border border-purple-300 rounded-md focus:ring-purple-500 focus:border-purple-500 text-gray-700" rows="3" placeholder="Ex: 'Transformez votre corps en 30 jours', 'Pour les entrepreneurs qui veulent plus de liberté'..."></textarea>
+                        <button id="generate-headline-btn" class="mt-3 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200">Générer des titres</button>
+                        <div id="headline-loading" class="mt-3 text-purple-600 hidden">Chargement...</div>
+                        <div id="headline-results" class="mt-4 p-3 bg-purple-100 rounded-md text-purple-800 text-sm hidden"></div>
+                    </div>
+                `,
+                outils: "<ul><li><strong>Constructeurs de Pages :</strong> Elementor, Kartra, Systeme.io.</li><li><strong>Analyse Comportementale :</strong> Hotjar, Google Analytics.</li><li><strong>Tests A/B :</strong> VWO.</li></ul>",
+                checklist: "<ul><li>[ ] Votre page de vente a-t-elle un titre et une VSL percutants ?</li><li>[ ] La preuve sociale est-elle bien visible et crédible ?</li><li>[ ] Le CTA est-il clair, unique et répété ?</li><li>[ ] La page est-elle optimisée pour le mobile ?</li></ul>"
+            }},
+            { id: 6, title: "Mauvais positionnement prix", phase: "launch", icon: "💰", content: {
+                intro: "Fixer un prix au hasard ou basé uniquement sur les coûts, sans tenir compte de la valeur perçue par le client, de la concurrence et de votre positionnement stratégique.",
+                description: "Un prix trop bas peut dévaloriser votre offre et attirer les mauvais clients. Un prix trop élevé sans justification claire peut dissuader les acheteurs. Le prix est un message puissant sur la qualité et la valeur de votre produit.",
+                conseils: `<h4>Stratégies de Tarification Avancées :</h4><ul><li><strong>Tarification Basée sur la Valeur :</strong> Fixez le prix en fonction des bénéfices pour le client.</li><li><strong>Tarification par Paliers :</strong> Offrez des versions Basique, Premium, VIP pour toucher différents segments.</li><li><strong>Offres Groupées (Bundling) :</strong> Augmentez la valeur perçue et le panier moyen.</li><li><strong>Ancre de Prix :</strong> Présentez un prix de référence plus élevé avant de révéler votre prix réduit.</li></ul>`,
+                outils: "<ul><li><strong>Analyse Concurrentielle :</strong> SimilarWeb, SpyFu.</li><li><strong>Simulation :</strong> Excel, Google Sheets.</li></ul>",
+                checklist: "<ul><li>[ ] Votre prix est-il basé sur la valeur perçue par le client ?</li><li>[ ] Avez-vous envisagé des paliers de prix ou des offres groupées ?</li><li>[ ] La preuve de valeur justifie-t-elle clairement votre prix ?</li><li>[ ] Avez-vous un plan pour tester et ajuster votre prix ?</li></ul>"
+            }},
+            { id: 7, title: "Manque d'urgence/rareté", phase: "launch", icon: "⏳", content: {
+                intro: "Ne pas créer un sentiment d'opportunité limitée, ce qui laisse les prospects indécis et repousse la décision d'achat. L'urgence et la rareté, utilisées éthiquement, sont de puissants catalyseurs.",
+                description: "Sans une bonne raison d'agir maintenant, les prospects vont procrastiner. L'urgence et la rareté combattent l'inertie en créant une fenêtre d'opportunité qui pousse à la décision.",
+                conseils: `<h4>Techniques d'Activation Éthiques :</h4><ul><li><strong>Compte à Rebours Authentiques :</strong> Pour les offres à durée limitée.</li><li><strong>Stock/Places Limité(e)s :</strong> Pour les produits physiques ou le coaching.</li><li><strong>Bonus pour Action Rapide :</strong> Offrez un bonus de forte valeur aux premiers acheteurs.</li><li><strong>Fenêtres d'Ouverture/Fermeture : :</strong> Communiquez clairement les dates pour créer un sentiment d'exclusivité.</li></ul>`,
+                outils: "<ul><li><strong>Plugins Compte à Rebours :</strong> Countdown Timer Ultimate, Thrive Ultimatum.</li><li><strong>Barres de Notification : :</strong> Hello Bar, OptinMonster.</li></ul>",
+                checklist: "<ul><li>[ ] Avez-vous intégré des éléments d'urgence ou de rareté authentiques ?</li><li>[ ] Les bonus pour action rapide sont-ils clairement communiqués ?</li><li>[ ] Votre communication est-elle transparente sur la durée de l'offre ?</li></ul>"
+            }},
+            { id: 8, title: "Négliger le post-lancement", phase: "post-launch", icon: "🤝", content: {
+                intro: "Croire que le travail est terminé une fois la vente effectuée. Le succès à long terme dépend de la satisfaction, de la rétention et de la capacité à transformer les acheteurs en ambassadeurs.",
+                description: "Abandonner les clients après l'achat mène à des taux de remboursement élevés, de mauvais avis et une perte d'opportunités de ventes futures. La phase post-lancement est cruciale pour construire une relation durable.",
+                conseils: `<h4>Stratégies de Fidélisation :</h4><ul><li><strong>Processus d'Onboarding Fluide :</strong> Guidez vos nouveaux clients pas à pas après l'achat.</li><li><strong>Support Réactif et Empathique :</strong> Un bon support transforme un problème en opportunité.</li><li><strong>Construction d'une Communauté :</strong> Créez un groupe privé pour favoriser l'entraide et l'appartenance.</li><li><strong>Stratégies d'Upsell/Cross-sell :</strong> Proposez des offres complémentaires au bon moment.</li></ul>`,
+                outils: "<ul><li><strong>Support Client :</strong> Zendesk, Intercom.</li><li><strong>Communauté :</strong> Mighty Networks, Circle.</li><li><strong>CRM :</strong> HubSpot, ActiveCampaign.</li></ul>",
+                checklist: "<ul><li>[ ] Avez-vous un processus d'onboarding clair ?</li><li>[ ] Votre support client est-il réactif et accessible ?</li><li>[ ] Avez-vous une stratégie pour construire une communauté ?</li><li>[ ] Des opportunités d'upsell sont-elles identifiées ?</li></ul>"
+            }},
+            { id: 9, title: "Ignorer l'analyse des données", phase: "post-launch", icon: "📈", content: {
+                intro: "Lancer et passer à autre chose sans analyser les résultats en profondeur. Chaque lancement est une mine d'or de données qui, si elles sont bien utilisées, peuvent transformer vos futurs succès.",
+                description: "Sans analyse, vous naviguez à l'aveugle. Vous ne saurez pas ce qui a fonctionné, ce qui a échoué, ni pourquoi. Répéter les mêmes erreurs est inévitable.",
+                conseils: `<h4>Optimisation Continue :</h4><ul><li><strong>Définir les KPIs Clés :</strong> Taux de conversion, CPA, LTV, Taux de remboursement.</li><li><strong>Utiliser les Bons Outils :</strong> Mettez en place Google Analytics 4, des tableaux de bord personnalisés, etc.</li><li><strong>Mener des Analyses A/B :</strong> Testez constamment vos pages, emails et publicités.</li><li><strong>Organiser des Rapports Post-Mortem :</strong> Documentez les leçons apprises avec votre équipe.</li></ul>`,
+                outils: "<ul><li><strong>Analyse :</strong> Google Analytics 4, Google Looker Studio.</li><li><strong>Plateformes Publicitaires : :</strong> Facebook Ads Manager, Google Ads.</li></ul>",
+                checklist: "<ul><li>[ ] Tous vos KPIs de lancement sont-ils définis et mesurés ?</li><li>[ ] Utilisez-vous des outils d'analyse pour suivre les performances ?</li><li>[ ] Des tests A/B sont-ils en cours ou prévus ?</li><li>[ ] Avez-vous un processus pour analyser les retours clients ?</li></ul>"
+            }},
+            { id: 10, title: "Manquer de flexibilité", phase: "post-launch", icon: "🤸", content: {
+                intro: "S'accrocher rigidement à un plan initial, même lorsque le marché ou les retours clients indiquent qu'un changement est nécessaire. Le monde digital évolue rapidement.",
+                description: "La rigidité est l'ennemie du succès dans un environnement dynamique. Ignorer les signaux d'alerte et refuser de s'adapter peut mener un lancement prometteur droit dans le mur.",
+                conseils: `<h4>L'Agilité comme Maître-Mot :</h4><ul><li><strong>Écoute Active et Réactivité :</strong> Surveillez constamment les retours et les tendances.</li><li><strong>Tests et Itérations Rapides :</strong> Considérez votre lancement comme une série d'expériences.</li><li><strong>Plan B et Scénarios Alternatifs :</strong> Ayez toujours un plan de secours en cas d'imprévu.</li><li><strong>Culture de l'Apprentissage Continu :</strong> N'ayez pas peur d'expérimenter de nouveaux outils ou stratégies.</li></ul>`,
+                outils: "<ul><li><strong>Veille Concurrentielle :</strong> Google Alerts, Feedly.</li><li><strong>Gestion de Projets Flexibles :</strong> Trello, Miro.</li></ul>",
+                checklist: "<ul><li>[ ] Votre équipe est-elle prête à s'adapter rapidement ?</li><li>[ ] Écoutez-vous activement les retours pour identifier les besoins de pivot ?</li><li>[ ] Avez-vous une culture de l'apprentissage et de l'expérimentation ?</li></ul>"
+            }}
+        ],
+        annexes: [
+            { title: "Glossaire des Termes Clés", content: "<ul><li><strong>Audience Préparée (Warm Audience) :</strong> Groupe de personnes qui connaissent déjà votre marque.</li><li><strong>Buyer Persona :</strong> Représentation semi-fictionnelle de votre client idéal.</li><li><strong>Call To Action (CTA) :</strong> Incitation à l'action (ex: 'Acheter maintenant').</li><li><strong>Coût par Acquisition (CPA) :</strong> Coût moyen pour acquérir un nouveau client.</li><li><strong>MVP (Minimum Viable Product) :</strong> Version d'un produit avec juste assez de fonctionnalités pour être utilisable par les premiers clients.</li><li><strong>Onboarding :</strong> Processus d'intégration des nouveaux clients.</li><li><strong>Storytelling :</strong> Art de raconter une histoire pour capter l'attention.</li></ul>" },
+            { title: "Modèles et Templates Utiles", content: "<h4>Template de Persona Client</h4><p>Nom, Âge, Profession, Objectifs, Défis, Objections...</p><h4>Checklist de Lancement</h4><p>Phase 1 (J-90), Phase 2 (J-30), Phase 3 (J-0), Phase 4 (J+7)...</p><h4>Structure de Page de Vente</h4><p>Haut de page, Problème, Solution, Bénéfices, Preuve Sociale, Garantie, FAQ, CTA...</p>" },
+            { title: "Études de Cas Inspirantes", content: "<h4>Cas 1: Cours de Fitness en Ligne</h4><p><strong>Défi:</strong> Marché saturé. <strong>Solution:</strong> Construction d'audience pendant 6 mois avec Lead Magnet et groupe Facebook. <strong>Résultat:</strong> 250k€ de CA en 7 jours.</p><h4>Cas 2: Application de Productivité</h4><p><strong>Défi:</strong> Application trop complexe, faible rétention. <strong>Solution:</strong> Analyse des données (Hotjar), interviews, et pivot vers un MVP ultra-simplifié. <strong>Résultat:</strong> Rétention x5.</p><h4>Cas 3: Produit Écologique</h4><p><strong>Défi:</strong> Difficulté à se démarquer. <strong>Solution:</strong> Refonte du message autour du storytelling de la fondatrice et de l'impact. <strong>Résultat:</strong> Conversion +40%.</p>" }
+        ]
+    };
+
+    const navContainer = document.getElementById('nav-container');
+    const contentDisplay = document.getElementById('content-display');
+    const contentTitle = document.getElementById('content-title');
+    const contentIntro = document.getElementById('content-intro');
+    const tabsContainer = document.getElementById('tabs-container');
+    const tabsContentContainer = document.getElementById('tabs-content-container');
+    const accordionContainer = document.getElementById('accordion-container');
+    const processSteps = document.querySelectorAll('.process-step');
+
+    function displayErrors() {
+        navContainer.innerHTML = data.errors.map(error => `
+            <div id="error-card-${error.id}" class="nav-card bg-white p-5 rounded-lg shadow-sm border border-gray-200 cursor-pointer text-center" data-id="${error.id}">
+                <div class="text-4xl mb-3">${error.icon}</div>
+                <h4 class="font-semibold text-gray-800">Erreur #${error.id}</h4>
+                <p class="text-sm text-gray-600">${error.title}</p>
+            </div>
+        `).join('');
+    }
+
+    function displayAnnexes() {
+        accordionContainer.innerHTML = data.annexes.map((annexe, index) => `
+            <div class="border border-gray-200 rounded-lg bg-white">
+                <h2>
+                    <button type="button" class="accordion-button flex items-center justify-between w-full p-5 font-medium text-left text-gray-700 hover:bg-gray-50" data-accordion-target="accordion-body-${index}">
+                        <span>${annexe.title}</span>
+                        <svg class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+                        </svg>
+                    </button>
+                </h2>
+                <div id="accordion-body-${index}" class="accordion-content">
+                    <div class="p-5 border-t border-gray-200 prose max-w-none">
+                        ${annexe.content}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateContent(errorId) {
+        const error = data.errors.find(e => e.id === errorId);
+        if (!error) return;
+
+        contentDisplay.classList.remove('hidden');
+        contentTitle.textContent = `Erreur #${error.id}: ${error.title}`;
+        contentIntro.textContent = error.content.intro;
+
+        document.getElementById('tab-content-description').innerHTML = `<p>${error.content.description}</p>`;
+        document.getElementById('tab-content-conseils').innerHTML = error.content.conseils;
+        document.getElementById('tab-content-outils').innerHTML = error.content.outils;
+        document.getElementById('tab-content-checklist').innerHTML = error.content.checklist;
+
+        // Activate the first tab by default
+        activateTab('description');
+        
+        contentDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Re-attach event listeners for newly rendered LLM buttons
+        if (error.id === 1) {
+            document.getElementById('generate-lead-magnet-btn').addEventListener('click', generateLeadMagnetIdeas);
+        } else if (error.id === 5) {
+            document.getElementById('generate-headline-btn').addEventListener('click', generateSalesPageHeadlines);
+        }
+    }
+    
+    function activateTab(tabId) {
+        tabsContainer.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        tabsContentContainer.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.toggle('active', content.id === `tab-content-${tabId}`);
+        });
+    }
+    
+    function highlightErrorsByPhase(phase) {
+        data.errors.forEach(error => {
+            const card = document.getElementById(`error-card-${error.id}`);
+            if (error.phase === phase) {
+                card.classList.add('highlight-error');
+            } else {
+                card.classList.remove('highlight-error');
+            }
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.nav-card').forEach(c => c.classList.remove('highlight-error'));
+        }, 3000);
+    }
+
+    navContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.nav-card');
+        if (card) {
+            const errorId = parseInt(card.dataset.id);
+            document.querySelectorAll('.nav-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            updateContent(errorId);
+        }
+    });
+    
+    tabsContainer.addEventListener('click', (e) => {
+        const tabButton = e.target.closest('.tab-btn');
+        if (tabButton) {
+            activateTab(tabButton.dataset.tab);
+        }
+    });
+
+    accordionContainer.addEventListener('click', (e) => {
+        const button = e.target.closest('.accordion-button');
+        if (button) {
+            const content = document.getElementById(button.dataset.accordionTarget);
+            const svg = button.querySelector('svg');
+            
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                svg.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                svg.style.transform = 'rotate(0deg)';
+            }
+        }
+    });
+    
+    processSteps.forEach(step => {
+        step.addEventListener('click', () => {
+            const phase = step.dataset.phase;
+            highlightErrorsByPhase(phase);
+        });
+    });
+
+    // Gemini API integration functions
+    async function generateContentWithGemini(prompt, targetElementId, loadingElementId) {
+        const loadingElement = document.getElementById(loadingElementId);
+        const resultsElement = document.getElementById(targetElementId);
+        resultsElement.innerHTML = '';
+        resultsElement.classList.add('hidden');
+        loadingElement.classList.remove('hidden');
+
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        const payload = { contents: chatHistory };
+        const apiKey = ""; // Canvas will automatically provide this at runtime
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+        let retries = 0;
+        const maxRetries = 5;
+        const baseDelay = 1000; // 1 second
+
+        while (retries < maxRetries) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    if (response.status === 429) { // Too many requests
+                        retries++;
+                        const delay = baseDelay * Math.pow(2, retries);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; // Retry
+                    } else {
+                        throw new Error(`API error: ${response.status} ${response.statusText}`);
+                    }
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultsElement.innerHTML = text.replace(/\n/g, '<br>'); // Format newlines for HTML display
+                    resultsElement.classList.remove('hidden');
+                } else {
+                    resultsElement.innerHTML = "Aucune idée générée. Veuillez réessayer.";
+                    resultsElement.classList.remove('hidden');
+                }
+                break; // Success, exit loop
+            } catch (error) {
+                if (retries < maxRetries - 1) {
+                    retries++;
+                    const delay = baseDelay * Math.pow(2, retries);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                } else {
+                    resultsElement.innerHTML = `Erreur lors de la génération : ${error.message}. Veuillez vérifier votre saisie et réessayer.`;
+                    resultsElement.classList.remove('hidden');
+                }
+            } finally {
+                loadingElement.classList.add('hidden');
+            }
+        }
+    }
+
+    function generateLeadMagnetIdeas() {
+        const input = document.getElementById('lead-magnet-input').value;
+        if (!input.trim()) {
+            document.getElementById('lead-magnet-results').innerHTML = "Veuillez décrire votre niche ou produit.";
+            document.getElementById('lead-magnet-results').classList.remove('hidden');
+            return;
+        }
+        const prompt = `Génère 5 idées de lead magnets créatives et pertinentes pour une audience intéressée par "${input}". Les idées doivent être variées (ex: ebook, checklist, mini-cours, template, calculateur).`;
+        generateContentWithGemini(prompt, 'lead-magnet-results', 'lead-magnet-loading');
+    }
+
+    function generateSalesPageHeadlines() {
+        const input = document.getElementById('headline-input').value;
+        if (!input.trim()) {
+            document.getElementById('headline-results').innerHTML = "Veuillez décrire le bénéfice ou l'audience cible.";
+            document.getElementById('headline-results').classList.remove('hidden');
+            return;
+        }
+        const prompt = `Génère 5 titres de page de vente percutants et orientés bénéfices pour un produit ou service dont le bénéfice principal ou l'audience cible est "${input}". Les titres doivent être accrocheurs et inciter à l'action.`;
+        generateContentWithGemini(prompt, 'headline-results', 'headline-loading');
+    }
+
+    // Initialisation
+    displayErrors();
+    displayAnnexes();
+});
+</script>
+
+</body>
+</html>
